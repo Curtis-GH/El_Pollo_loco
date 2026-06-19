@@ -1,15 +1,14 @@
-class Chracter{
-    x;
-    y;
-
+class Character extends MoveableObject{
+   
 
     moveRight(){
 
     }
-}
+
 
     jump(){
         
 
 
+    }
     }
