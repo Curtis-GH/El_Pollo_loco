@@ -4,6 +4,10 @@ let keyboard = new Keyboard();
 
 function init() {
     canvas = document.getElementById('canvas');
+}
+
+function startGame() {
+    document.getElementById('start-screen').style.display = 'none';
     world = new World(canvas, keyboard);
 }
 
