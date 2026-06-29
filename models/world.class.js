@@ -21,6 +21,7 @@ class World {
 }
 
 run() {
+    this.level.enemies.forEach(enemy => enemy.animate());
     setInterval(() => {
         this.checkCollisions();
         this.checkThrowObjects();
