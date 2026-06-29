@@ -1,9 +1,21 @@
+@font-face {
+    font-family: 'Lilita One';
+    src: url('fonts/LilitaOne-Regular.ttf');
+}
 body {
+    font-family: 'Lilita One', cursive;
     display: flex;
     flex-direction: column;
     align-items: center;
-    background-color: #222;
+    justify-content: center;
+    min-height: 100vh;
+    background-image: url('img/Desert.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
     margin: 0;
+    font-size: 25px;
+    color:#f5a623;
 }
 
 #game-container {
@@ -46,4 +58,11 @@ canvas {
 
 #start-button:hover {
     background-color: #e09000;
+}
+#game-container {
+    position: relative;
+    width: 720px;
+    height: 480px;
+    box-shadow: 0 0 40px rgba(0,0,0,0.8);
+   
 }
