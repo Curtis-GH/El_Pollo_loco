@@ -65,9 +65,10 @@ class Character extends MoveableObject {
             this.otherDirection = true;
         }
 
-        if (this.world.keyboard.SPACE && !this.isAboveGround()) {
-            this.speedY = 30;
-        }
+       if (this.world.keyboard.SPACE && !this.isAboveGround()) {
+    this.speedY = 30;
+    this.world.soundManager.play('jump');
+}
 
         this.world.camera_x = -this.x + 100;
     }, 1000 / 60);

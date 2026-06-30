@@ -9,17 +9,20 @@ class World {
     statusBarCoin = new StatusBar('coin', 40, 50);
     statusBarBottle = new StatusBar('bottle', 40, 100);
     statusBarEndboss = new StatusBar('endboss', 480, 0);
+    isRespawningBottles = false;
     throwableObjects = [];
     intervals = [];
     coinCount = 0;
     bottleCount = 0;
     gameEnded = false;
+    soundManager;
     endboss = this.level ? this.level.enemies.find(e => e instanceof Endboss) : null;
 
-    constructor(canvas, keyboard) {
+    constructor(canvas, keyboard, soundManager) {
         this.ctx = canvas.getContext('2d');
         this.canvas = canvas;
         this.keyboard = keyboard;
+        this.soundManager = soundManager;
         this.endboss = this.level.enemies.find(e => e instanceof Endboss);
         this.setWorld();
         this.draw();
@@ -31,16 +34,17 @@ class World {
     }
 
     run() {
-        this.level.enemies.forEach(enemy => enemy.animate());
-        let id = setInterval(() => {
-            this.checkCollisions();
-            this.checkThrowObjects();
-            this.checkCoinCollisions();
-            this.checkBottleCollisions();
-            this.checkBottleEndbossCollisions();
-        }, 1000 / 60);
-        this.intervals.push(id);
-    }
+    this.level.enemies.forEach(enemy => enemy.animate());
+    let id = setInterval(() => {
+        this.checkCollisions();
+        this.checkThrowObjects();
+        this.checkCoinCollisions();
+        this.checkBottleCollisions();
+        this.checkBottleEndbossCollisions();
+        this.respawnBottles();
+    }, 1000 / 60);
+    this.intervals.push(id);
+}
 
     stopGame() {
         this.intervals.forEach(id => clearInterval(id));
@@ -57,6 +61,7 @@ class World {
             this.bottleCount -= 20;
             if (this.bottleCount < 0) this.bottleCount = 0;
             this.statusBarBottle.setPercentage(this.bottleCount);
+            this.soundManager.play('throw');
             this.keyboard.D = false;
         }
     }
@@ -69,9 +74,11 @@ class World {
             if (this.character.isCollidingFromAbove(enemy)) {
                 enemy.die();
                 this.character.speedY = 20;
+                this.soundManager.play('chickenDie');
             } else if (this.character.isColliding(enemy) && !this.character.isHurt()) {
                 this.character.hit();
                 this.statusBarHealth.setPercentage(this.character.energy);
+                this.soundManager.play('hit');
             }
         });
 
@@ -87,23 +94,37 @@ class World {
                 this.coinCount += 20;
                 if (this.coinCount > 100) this.coinCount = 100;
                 this.statusBarCoin.setPercentage(this.coinCount);
+                this.soundManager.play('coin');
             }
         });
     }
 
     checkBottleCollisions() {
-        if (this.bottleCount >= 100) return;
+    if (this.bottleCount >= 100) return;
 
-        this.level.bottles.forEach((bottle, index) => {
-            if (this.character.isColliding(bottle)) {
-                this.level.bottles.splice(index, 1);
-                this.bottleCount += 20;
-                if (this.bottleCount > 100) this.bottleCount = 100;
-                this.statusBarBottle.setPercentage(this.bottleCount);
+    this.level.bottles.forEach((bottle, index) => {
+        if (this.character.isColliding(bottle)) {
+            this.level.bottles.splice(index, 1);
+            this.bottleCount += 20;
+            if (this.bottleCount > 100) this.bottleCount = 100;
+            this.statusBarBottle.setPercentage(this.bottleCount);
+            this.soundManager.play('bottle');
+        }
+    });
+}
+respawnBottles() {
+    if (this.level.bottles.length === 0 && !this.isRespawningBottles) {
+        this.isRespawningBottles = true;
+        let id = setTimeout(() => {
+            for (let i = 0; i < 3; i++) {
+                let x = 200 + Math.random() * (this.level.level_end_x - 400);
+                this.level.bottles.push(new Bottle(x, 370));
             }
-        });
+            this.isRespawningBottles = false;
+        }, 3000);
+        this.intervals.push(id);
     }
-
+}
     checkBottleEndbossCollisions() {
         if (!this.endboss || this.endboss.isDead()) return;
 
@@ -112,6 +133,7 @@ class World {
                 this.endboss.hitBoss();
                 this.statusBarEndboss.setPercentage(this.endboss.energy);
                 this.throwableObjects.splice(index, 1);
+                this.soundManager.playEndbossHit();
             }
         });
 
@@ -172,6 +194,8 @@ class World {
         if (this.gameEnded) return;
         this.gameEnded = true;
         this.stopGame();
+        this.soundManager.sounds.background.pause();
+        this.soundManager.play('gameover');
         document.getElementById('gameover-screen').classList.remove('hidden');
     }
 
@@ -179,6 +203,8 @@ class World {
         if (this.gameEnded) return;
         this.gameEnded = true;
         this.stopGame();
+        this.soundManager.sounds.background.pause();
+        this.soundManager.play('win');
         document.getElementById('win-screen').classList.remove('hidden');
     }
 }

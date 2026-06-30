@@ -1,26 +1,41 @@
 let canvas;
 let world;
 let keyboard = new Keyboard();
+let soundManager = new SoundManager();
 
 function init() {
     canvas = document.getElementById('canvas');
+    updateMuteButton();
 }
 
 function startGame() {
     document.getElementById('start-screen').classList.add('hidden');
-    world = new World(canvas, keyboard);
+    world = new World(canvas, keyboard, soundManager);
+    soundManager.playBackground();
 }
 
 function restartGame() {
     document.getElementById('gameover-screen').classList.add('hidden');
     document.getElementById('win-screen').classList.add('hidden');
-    world = new World(canvas, keyboard);
+    world = new World(canvas, keyboard, soundManager);
+    soundManager.playBackground();
 }
 
 function goToStart() {
     document.getElementById('gameover-screen').classList.add('hidden');
     document.getElementById('win-screen').classList.add('hidden');
     document.getElementById('start-screen').classList.remove('hidden');
+    soundManager.stopAll();
+}
+
+function toggleMute() {
+    soundManager.toggleMute();
+    updateMuteButton();
+}
+
+function updateMuteButton() {
+    let btn = document.getElementById('mute-button');
+    btn.textContent = soundManager.isMuted ? '🔇' : '🔊';
 }
 
 window.addEventListener("keydown", (e) => {
