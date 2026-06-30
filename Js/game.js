@@ -7,8 +7,20 @@ function init() {
 }
 
 function startGame() {
-    document.getElementById('start-screen').style.display = 'none';
+    document.getElementById('start-screen').classList.add('hidden');
     world = new World(canvas, keyboard);
+}
+
+function restartGame() {
+    document.getElementById('gameover-screen').classList.add('hidden');
+    document.getElementById('win-screen').classList.add('hidden');
+    world = new World(canvas, keyboard);
+}
+
+function goToStart() {
+    document.getElementById('gameover-screen').classList.add('hidden');
+    document.getElementById('win-screen').classList.add('hidden');
+    document.getElementById('start-screen').classList.remove('hidden');
 }
 
 window.addEventListener("keydown", (e) => {

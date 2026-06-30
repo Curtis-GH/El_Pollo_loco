@@ -1,6 +1,6 @@
 class World {
     character = new Character();
-    level = level1;
+    level = createLevel1();
     canvas;
     ctx;
     keyboard;
@@ -13,6 +13,7 @@ class World {
     intervals = [];
     coinCount = 0;
     bottleCount = 0;
+    gameEnded = false;
     endboss = this.level ? this.level.enemies.find(e => e instanceof Endboss) : null;
 
     constructor(canvas, keyboard) {
@@ -29,18 +30,17 @@ class World {
         this.character.world = this;
     }
 
-  run() {
-    this.level.enemies.forEach(enemy => enemy.animate());
-    let id = setInterval(() => {
-        this.checkCollisions();
-        this.checkThrowObjects();
-        this.checkCoinCollisions();
-        this.checkBottleCollisions();
-        this.checkBottleEndbossCollisions();
-    }, 1000 / 60);
-    this.intervals.push(id);
-}
-
+    run() {
+        this.level.enemies.forEach(enemy => enemy.animate());
+        let id = setInterval(() => {
+            this.checkCollisions();
+            this.checkThrowObjects();
+            this.checkCoinCollisions();
+            this.checkBottleCollisions();
+            this.checkBottleEndbossCollisions();
+        }, 1000 / 60);
+        this.intervals.push(id);
+    }
 
     stopGame() {
         this.intervals.forEach(id => clearInterval(id));
@@ -62,19 +62,23 @@ class World {
     }
 
     checkCollisions() {
-    this.level.enemies.forEach((enemy) => {
-        if (enemy instanceof Endboss) return;
-        if (enemy.isChickenDead) return;
+        this.level.enemies.forEach((enemy) => {
+            if (enemy instanceof Endboss) return;
+            if (enemy.isChickenDead) return;
 
-        if (this.character.isCollidingFromAbove(enemy)) {
-            enemy.die();
-            this.character.speedY = 20;
-        } else if (this.character.isColliding(enemy) && !this.character.isHurt()) {
-            this.character.hit();
-            this.statusBarHealth.setPercentage(this.character.energy);
+            if (this.character.isCollidingFromAbove(enemy)) {
+                enemy.die();
+                this.character.speedY = 20;
+            } else if (this.character.isColliding(enemy) && !this.character.isHurt()) {
+                this.character.hit();
+                this.statusBarHealth.setPercentage(this.character.energy);
+            }
+        });
+
+        if (this.character.isDead()) {
+            this.showGameOver();
         }
-    });
-}
+    }
 
     checkCoinCollisions() {
         this.level.coins.forEach((coin, index) => {
@@ -87,18 +91,18 @@ class World {
         });
     }
 
-   checkBottleCollisions() {
-    if (this.bottleCount >= 100) return;
+    checkBottleCollisions() {
+        if (this.bottleCount >= 100) return;
 
-    this.level.bottles.forEach((bottle, index) => {
-        if (this.character.isColliding(bottle)) {
-            this.level.bottles.splice(index, 1);
-            this.bottleCount += 20;
-            if (this.bottleCount > 100) this.bottleCount = 100;
-            this.statusBarBottle.setPercentage(this.bottleCount);
-        }
-    });
-}
+        this.level.bottles.forEach((bottle, index) => {
+            if (this.character.isColliding(bottle)) {
+                this.level.bottles.splice(index, 1);
+                this.bottleCount += 20;
+                if (this.bottleCount > 100) this.bottleCount = 100;
+                this.statusBarBottle.setPercentage(this.bottleCount);
+            }
+        });
+    }
 
     checkBottleEndbossCollisions() {
         if (!this.endboss || this.endboss.isDead()) return;
@@ -110,6 +114,10 @@ class World {
                 this.throwableObjects.splice(index, 1);
             }
         });
+
+        if (this.endboss.isDead()) {
+            this.showWin();
+        }
     }
 
     draw() {
@@ -158,5 +166,19 @@ class World {
             mo.x = mo.x * -1;
             this.ctx.restore();
         }
+    }
+
+    showGameOver() {
+        if (this.gameEnded) return;
+        this.gameEnded = true;
+        this.stopGame();
+        document.getElementById('gameover-screen').classList.remove('hidden');
+    }
+
+    showWin() {
+        if (this.gameEnded) return;
+        this.gameEnded = true;
+        this.stopGame();
+        document.getElementById('win-screen').classList.remove('hidden');
     }
 }

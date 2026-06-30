@@ -54,7 +54,7 @@ class Character extends MoveableObject {
     }
 
     animate() {
-    setInterval(() => {
+    let moveId = setInterval(() => {
         if (this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x) {
             this.x += this.speed;
             this.otherDirection = false;
@@ -71,8 +71,9 @@ class Character extends MoveableObject {
 
         this.world.camera_x = -this.x + 100;
     }, 1000 / 60);
+    this.intervals.push(moveId);
 
-    setInterval(() => {
+    let animId = setInterval(() => {
         if (this.isDead()) {
             this.playAnimation(this.IMAGES_DEAD);
         } else if (this.isHurt()) {
@@ -85,4 +86,5 @@ class Character extends MoveableObject {
             }
         }
     }, 50);
+    this.intervals.push(animId);
 }}

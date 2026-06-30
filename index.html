@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Lilita+One&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <title>EL POLLO LOCO</title>
     <script src="models/drawable-object.class.js"></script>
@@ -13,12 +14,12 @@
     <script src="models/cloud.class.js"></script>
     <script src="models/background-object.class.js"></script>
     <script src="models/status-bar.class.js"></script>
+    <script src="models/coin.class.js"></script>
+    <script src="models/bottle.class.js"></script>
     <script src="models/throwable-object.class.js"></script>
     <script src="models/endboss.class.js"></script>
     <script src="models/keyboard.class.js"></script>
     <script src="models/level.class.js"></script>
-    <script src="models/coin.class.js"></script>
-    <script src="models/bottle.class.js"></script>
     <script src="models/world.class.js"></script>
     <script src="levels/Level1.js"></script>
     <script src="js/game.js"></script>
@@ -27,9 +28,26 @@
     <h1>El Pollo Loco</h1>
     <div id="game-container">
         <canvas id="canvas" width="720" height="480"></canvas>
+
         <div id="start-screen">
             <img src="img/9_intro_outro_screens/start/startscreen_1.png" alt="Start Screen">
             <button id="start-button" onclick="startGame()">PLAY</button>
+        </div>
+
+        <div id="gameover-screen" class="end-screen hidden">
+            <img src="img/9_intro_outro_screens/game_over/you lost.png" alt="Game Over">
+            <div class="end-buttons">
+                <button onclick="restartGame()">RESTART</button>
+                <button onclick="goToStart()">HOME</button>
+            </div>
+        </div>
+
+        <div id="win-screen" class="end-screen hidden">
+            <img src="img/You won, you lost/You won A.png" alt="You Won">
+            <div class="end-buttons">
+                <button onclick="restartGame()">RESTART</button>
+                <button onclick="goToStart()">HOME</button>
+            </div>
         </div>
     </div>
 </body>
