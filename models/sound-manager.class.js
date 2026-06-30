@@ -14,11 +14,14 @@ class SoundManager {
     };
 
     isMuted = false;
+    volume = 0.5;
 
     constructor() {
         this.isMuted = localStorage.getItem('muted') === 'true';
+        let savedVolume = localStorage.getItem('volume');
+        this.volume = savedVolume !== null ? parseFloat(savedVolume) : 0.5;
         this.sounds.background.loop = true;
-        this.sounds.background.volume = 0.2;
+        this.applyVolume();
         this.applyMute();
     }
 
@@ -63,5 +66,17 @@ class SoundManager {
         } else {
             this.playBackground();
         }
+    }
+
+    setVolume(value) {
+        this.volume = value;
+        localStorage.setItem('volume', value);
+        this.applyVolume();
+    }
+
+    applyVolume() {
+        Object.entries(this.sounds).forEach(([name, sound]) => {
+            sound.volume = name === 'background' ? this.volume * 0.4 : this.volume;
+        });
     }
 }

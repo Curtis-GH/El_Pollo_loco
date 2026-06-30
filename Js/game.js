@@ -6,6 +6,11 @@ let soundManager = new SoundManager();
 function init() {
     canvas = document.getElementById('canvas');
     updateMuteButton();
+    document.getElementById('volume-slider').value = soundManager.volume;
+}
+
+function changeVolume(value) {
+    soundManager.setVolume(parseFloat(value));
 }
 
 function startGame() {

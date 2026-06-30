@@ -5,6 +5,32 @@ class Character extends MoveableObject {
     speed = 10;
     offset = { top: 100, bottom: 10, left: 20, right: 20 };
 
+    IMAGES_IDLE = [
+        'img/2_character_pepe/1_idle/idle/I-1.png',
+        'img/2_character_pepe/1_idle/idle/I-2.png',
+        'img/2_character_pepe/1_idle/idle/I-3.png',
+        'img/2_character_pepe/1_idle/idle/I-4.png',
+        'img/2_character_pepe/1_idle/idle/I-5.png',
+        'img/2_character_pepe/1_idle/idle/I-6.png',
+        'img/2_character_pepe/1_idle/idle/I-7.png',
+        'img/2_character_pepe/1_idle/idle/I-8.png',
+        'img/2_character_pepe/1_idle/idle/I-9.png',
+        'img/2_character_pepe/1_idle/idle/I-10.png',
+    ];
+
+    IMAGES_SLEEP = [
+        'img/2_character_pepe/1_idle/long_idle/I-11.png',
+        'img/2_character_pepe/1_idle/long_idle/I-12.png',
+        'img/2_character_pepe/1_idle/long_idle/I-13.png',
+        'img/2_character_pepe/1_idle/long_idle/I-14.png',
+        'img/2_character_pepe/1_idle/long_idle/I-15.png',
+        'img/2_character_pepe/1_idle/long_idle/I-16.png',
+        'img/2_character_pepe/1_idle/long_idle/I-17.png',
+        'img/2_character_pepe/1_idle/long_idle/I-18.png',
+        'img/2_character_pepe/1_idle/long_idle/I-19.png',
+        'img/2_character_pepe/1_idle/long_idle/I-20.png',
+    ];
+
     IMAGES_WALKING = [
         'img/2_character_pepe/2_walk/W-21.png',
         'img/2_character_pepe/2_walk/W-22.png',
@@ -41,10 +67,13 @@ class Character extends MoveableObject {
     ];
 
     currentImage = 0;
+    lastMoveTime = new Date().getTime();
 
     constructor() {
         super();
         this.loadImage('img/2_character_pepe/2_walk/W-21.png');
+        this.loadImages(this.IMAGES_IDLE);
+        this.loadImages(this.IMAGES_SLEEP);
         this.loadImages(this.IMAGES_WALKING);
         this.loadImages(this.IMAGES_JUMPING);
         this.loadImages(this.IMAGES_DEAD);
@@ -54,38 +83,49 @@ class Character extends MoveableObject {
     }
 
     animate() {
-    let moveId = setInterval(() => {
-        if (this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x) {
-            this.x += this.speed;
-            this.otherDirection = false;
-        }
-
-        if (this.world.keyboard.LEFT && this.x > 0) {
-            this.x -= this.speed;
-            this.otherDirection = true;
-        }
-
-       if (this.world.keyboard.SPACE && !this.isAboveGround()) {
-    this.speedY = 30;
-    this.world.soundManager.play('jump');
-}
-
-        this.world.camera_x = -this.x + 100;
-    }, 1000 / 60);
-    this.intervals.push(moveId);
-
-    let animId = setInterval(() => {
-        if (this.isDead()) {
-            this.playAnimation(this.IMAGES_DEAD);
-        } else if (this.isHurt()) {
-            this.playAnimation(this.IMAGES_HURT);
-        } else if (this.isAboveGround()) {
-            this.playAnimation(this.IMAGES_JUMPING);
-        } else {
-            if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
-                this.playAnimation(this.IMAGES_WALKING);
+        let moveId = setInterval(() => {
+            if (this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x) {
+                this.x += this.speed;
+                this.otherDirection = false;
+                this.lastMoveTime = new Date().getTime();
             }
-        }
-    }, 50);
-    this.intervals.push(animId);
-}}
+
+            if (this.world.keyboard.LEFT && this.x > 0) {
+                this.x -= this.speed;
+                this.otherDirection = true;
+                this.lastMoveTime = new Date().getTime();
+            }
+
+            if (this.world.keyboard.SPACE && !this.isAboveGround()) {
+                this.speedY = 30;
+                this.lastMoveTime = new Date().getTime();
+                this.world.soundManager.play('jump');
+            }
+
+            this.world.camera_x = -this.x + 100;
+        }, 1000 / 60);
+        this.intervals.push(moveId);
+
+        let animId = setInterval(() => {
+            if (this.isDead()) {
+                this.playAnimation(this.IMAGES_DEAD);
+            } else if (this.isHurt()) {
+                this.playAnimation(this.IMAGES_HURT);
+            } else if (this.isAboveGround()) {
+                this.playAnimation(this.IMAGES_JUMPING);
+            } else if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
+                this.playAnimation(this.IMAGES_WALKING);
+            } else if (this.isLongIdle()) {
+                this.playAnimation(this.IMAGES_SLEEP);
+            } else {
+                this.playAnimation(this.IMAGES_IDLE);
+            }
+        }, 100);
+        this.intervals.push(animId);
+    }
+
+    isLongIdle() {
+        let timepassed = (new Date().getTime() - this.lastMoveTime) / 1000;
+        return timepassed > 8;
+    }
+}
