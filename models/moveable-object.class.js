@@ -34,8 +34,10 @@ class MoveableObject extends DrawableObject {
     }
 
     isCollidingFromAbove(mo) {
-        return this.isColliding(mo) && this.speedY < 0;
-    }
+    let characterBottom = this.y + this.height - this.offset.bottom;
+    let enemyTop = mo.y + mo.offset.top;
+    return this.isColliding(mo) && this.isAboveGround() && characterBottom < enemyTop + 30;
+}
 
     hit() {
         this.energy -= 5;

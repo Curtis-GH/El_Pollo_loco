@@ -13,11 +13,13 @@ class World {
     intervals = [];
     coinCount = 0;
     bottleCount = 0;
+    endboss = this.level ? this.level.enemies.find(e => e instanceof Endboss) : null;
 
     constructor(canvas, keyboard) {
         this.ctx = canvas.getContext('2d');
         this.canvas = canvas;
         this.keyboard = keyboard;
+        this.endboss = this.level.enemies.find(e => e instanceof Endboss);
         this.setWorld();
         this.draw();
         this.run();
@@ -27,16 +29,18 @@ class World {
         this.character.world = this;
     }
 
-    run() {
-        this.level.enemies.forEach(enemy => enemy.animate());
-        let id = setInterval(() => {
-            this.checkCollisions();
-            this.checkThrowObjects();
-            this.checkCoinCollisions();
-            this.checkBottleCollisions();
-        }, 200);
-        this.intervals.push(id);
-    }
+  run() {
+    this.level.enemies.forEach(enemy => enemy.animate());
+    let id = setInterval(() => {
+        this.checkCollisions();
+        this.checkThrowObjects();
+        this.checkCoinCollisions();
+        this.checkBottleCollisions();
+        this.checkBottleEndbossCollisions();
+    }, 1000 / 60);
+    this.intervals.push(id);
+}
+
 
     stopGame() {
         this.intervals.forEach(id => clearInterval(id));
@@ -59,12 +63,13 @@ class World {
 
     checkCollisions() {
     this.level.enemies.forEach((enemy) => {
-        if (enemy.isChickenDead !== undefined && enemy.isChickenDead) return;
+        if (enemy instanceof Endboss) return;
+        if (enemy.isChickenDead) return;
 
         if (this.character.isCollidingFromAbove(enemy)) {
             enemy.die();
             this.character.speedY = 20;
-        } else if (this.character.isColliding(enemy)) {
+        } else if (this.character.isColliding(enemy) && !this.character.isHurt()) {
             this.character.hit();
             this.statusBarHealth.setPercentage(this.character.energy);
         }
@@ -82,13 +87,27 @@ class World {
         });
     }
 
-    checkBottleCollisions() {
-        this.level.bottles.forEach((bottle, index) => {
-            if (this.character.isColliding(bottle)) {
-                this.level.bottles.splice(index, 1);
-                this.bottleCount += 20;
-                if (this.bottleCount > 100) this.bottleCount = 100;
-                this.statusBarBottle.setPercentage(this.bottleCount);
+   checkBottleCollisions() {
+    if (this.bottleCount >= 100) return;
+
+    this.level.bottles.forEach((bottle, index) => {
+        if (this.character.isColliding(bottle)) {
+            this.level.bottles.splice(index, 1);
+            this.bottleCount += 20;
+            if (this.bottleCount > 100) this.bottleCount = 100;
+            this.statusBarBottle.setPercentage(this.bottleCount);
+        }
+    });
+}
+
+    checkBottleEndbossCollisions() {
+        if (!this.endboss || this.endboss.isDead()) return;
+
+        this.throwableObjects.forEach((bottle, index) => {
+            if (this.endboss.isColliding(bottle)) {
+                this.endboss.hitBoss();
+                this.statusBarEndboss.setPercentage(this.endboss.energy);
+                this.throwableObjects.splice(index, 1);
             }
         });
     }
