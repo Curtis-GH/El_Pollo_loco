@@ -58,13 +58,18 @@ class World {
     }
 
     checkCollisions() {
-        this.level.enemies.forEach((enemy) => {
-            if (this.character.isColliding(enemy)) {
-                this.character.hit();
-                this.statusBarHealth.setPercentage(this.character.energy);
-            }
-        });
-    }
+    this.level.enemies.forEach((enemy) => {
+        if (enemy.isChickenDead !== undefined && enemy.isChickenDead) return;
+
+        if (this.character.isCollidingFromAbove(enemy)) {
+            enemy.die();
+            this.character.speedY = 20;
+        } else if (this.character.isColliding(enemy)) {
+            this.character.hit();
+            this.statusBarHealth.setPercentage(this.character.energy);
+        }
+    });
+}
 
     checkCoinCollisions() {
         this.level.coins.forEach((coin, index) => {

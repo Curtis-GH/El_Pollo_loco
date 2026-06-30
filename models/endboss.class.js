@@ -1,7 +1,9 @@
 class Endboss extends MoveableObject {
+
     height = 400;
     width = 250;
     y = 50;
+    offset = { top: 60, bottom: 20, left: 30, right: 30 };
 
     IMAGES_WALKING = [
         'img/4_enemie_boss_chicken/2_alert/G5.png',
@@ -22,8 +24,9 @@ class Endboss extends MoveableObject {
     }
 
     animate() {
-        setInterval(() => {
+        let id = setInterval(() => {
             this.playAnimation(this.IMAGES_WALKING);
         }, 200);
+        this.intervals.push(id);
     }
 }
