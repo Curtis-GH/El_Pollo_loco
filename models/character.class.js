@@ -146,23 +146,33 @@ class Character extends MoveableObject {
      * Selects and plays the correct animation based on the current state.
      */
     animateGraphics() {
-        let id = setInterval(() => {
-            if (this.isDead()) {
-                this.playAnimation(this.IMAGES_DEAD);
-            } else if (this.isHurt()) {
-                this.playAnimation(this.IMAGES_HURT);
-            } else if (this.isAboveGround()) {
-                this.playAnimation(this.IMAGES_JUMPING);
-            } else if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
-                this.playAnimation(this.IMAGES_WALKING);
-            } else if (this.isLongIdle()) {
-                this.playAnimation(this.IMAGES_SLEEP);
-            } else {
-                this.playAnimation(this.IMAGES_IDLE);
-            }
-        }, 100);
-        this.intervals.push(id);
-    }
+    let id = setInterval(() => {
+        if (this.isDead()) {
+            this.playAnimation(this.IMAGES_DEAD);
+        } else if (this.isHurt()) {
+            this.playAnimation(this.IMAGES_HURT);
+        } else if (this.isAboveGround()) {
+            this.playJumpFrame();
+        } else if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
+            this.playAnimation(this.IMAGES_WALKING);
+        } else if (this.isLongIdle()) {
+            this.playAnimation(this.IMAGES_SLEEP);
+        } else {
+            this.playAnimation(this.IMAGES_IDLE);
+        }
+    }, 100);
+    this.intervals.push(id);
+}
+
+/**
+ * Shows the jump frame matching the current fall speed, once per jump.
+ */
+playJumpFrame() {
+    let progress = (30 - this.speedY) / 60;
+    let index = Math.min(Math.floor(progress * this.IMAGES_JUMPING.length), this.IMAGES_JUMPING.length - 1);
+    index = Math.max(index, 0);
+    this.img = this.imageCache[this.IMAGES_JUMPING[index]];
+}
 
     /**
      * Checks whether the character has been idle long enough to sleep.

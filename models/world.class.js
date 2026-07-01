@@ -43,6 +43,7 @@ class World {
      */
     setWorld() {
         this.character.world = this;
+        this.endboss.world = this;
     }
 
     /**
@@ -92,10 +93,22 @@ class World {
      */
     checkCollisions() {
         this.level.enemies.forEach((enemy) => this.handleEnemyCollision(enemy));
+        this.checkEndbossCollision();
         if (this.character.isDead()) {
             this.showGameOver();
         }
     }
+    /**
+ * Instantly kills the character on contact with the endboss.
+ */
+checkEndbossCollision() {
+    if (!this.endboss || this.endboss.isDead()) return;
+    if (this.character.isColliding(this.endboss)) {
+        this.character.energy = 0;
+        this.statusBarHealth.setPercentage(0);
+         this.character.playAnimation(this.character.IMAGES_DEAD);
+    }
+}
 
     /**
      * Handles a single enemy collision (stomp kill or taking damage).
