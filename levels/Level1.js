@@ -1,3 +1,9 @@
+/**
+ * Creates a fresh instance of level 1 with all enemies, clouds,
+ * background layers, coins and bottles. Called on every game start
+ * so a restart always begins with a clean level state.
+ * @returns {Level} A new level 1 instance.
+ */
 function createLevel1() {
     return new Level(
         [

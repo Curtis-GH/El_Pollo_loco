@@ -1,3 +1,6 @@
+/**
+ * The endboss enemy. Stronger than normal chickens with hurt and death states.
+ */
 class Endboss extends MoveableObject {
 
     height = 400;
@@ -30,6 +33,9 @@ class Endboss extends MoveableObject {
         'img/4_enemie_boss_chicken/5_dead/G26.png',
     ];
 
+    /**
+     * Loads all endboss images and positions the boss at the level end.
+     */
     constructor() {
         super();
         this.loadImage(this.IMAGES_ALERT[0]);
@@ -39,6 +45,9 @@ class Endboss extends MoveableObject {
         this.x = 2500;
     }
 
+    /**
+     * Plays the alert animation, switching to hurt when recently hit.
+     */
     animate() {
         let id = setInterval(() => {
             if (this.isEndbossDead) return;
@@ -51,6 +60,9 @@ class Endboss extends MoveableObject {
         this.intervals.push(id);
     }
 
+    /**
+     * Applies damage to the endboss and triggers death at zero energy.
+     */
     hitBoss() {
         this.energy -= 20;
         if (this.energy <= 0) {
@@ -61,18 +73,28 @@ class Endboss extends MoveableObject {
         }
     }
 
+    /**
+     * Checks whether the endboss was recently hurt (within one second).
+     * @returns {boolean} True if hurt less than one second ago.
+     */
     isHurt() {
         let timepassed = new Date().getTime() - this.lastHit;
         timepassed = timepassed / 1000;
         return timepassed < 1;
     }
 
+    /**
+     * Marks the endboss as dead and plays the death animation.
+     */
     die() {
         this.isEndbossDead = true;
         this.clearIntervals();
         this.playDeadAnimation();
     }
 
+    /**
+     * Plays the death animation frames once, then stops.
+     */
     playDeadAnimation() {
         let i = 0;
         let id = setInterval(() => {
@@ -85,6 +107,10 @@ class Endboss extends MoveableObject {
         }, 200);
     }
 
+    /**
+     * Checks whether the endboss is dead.
+     * @returns {boolean} True if the endboss has died.
+     */
     isDead() {
         return this.isEndbossDead;
     }

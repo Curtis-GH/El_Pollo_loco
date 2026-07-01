@@ -1,3 +1,6 @@
+/**
+ * Normal chicken enemy that walks left and can be stomped.
+ */
 class Chicken extends MoveableObject {
     y = 370;
     height = 60;
@@ -14,6 +17,9 @@ class Chicken extends MoveableObject {
 
     IMAGE_DEAD = 'img/3_enemies_chicken/chicken_normal/2_dead/dead.png';
 
+    /**
+     * Loads images and sets a random start position and speed.
+     */
     constructor() {
         super();
         this.loadImage(this.IMAGES_WALKING[0]);
@@ -23,6 +29,9 @@ class Chicken extends MoveableObject {
         this.speed = 0.15 + Math.random() * 0.5;
     }
 
+    /**
+     * Starts moving left and playing the walking animation.
+     */
     animate() {
         this.moveLeft();
         let id = setInterval(() => {
@@ -33,6 +42,9 @@ class Chicken extends MoveableObject {
         this.intervals.push(id);
     }
 
+    /**
+     * Kills the chicken, shows the dead image and stops its intervals.
+     */
     die() {
         this.isChickenDead = true;
         this.loadImage(this.IMAGE_DEAD);

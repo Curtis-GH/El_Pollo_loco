@@ -1,3 +1,6 @@
+/**
+ * The playable character Pepe. Handles movement, jumping and animations.
+ */
 class Character extends MoveableObject {
 
     height = 270;
@@ -69,6 +72,9 @@ class Character extends MoveableObject {
     currentImage = 0;
     lastMoveTime = new Date().getTime();
 
+    /**
+     * Loads all character images and starts gravity and animation.
+     */
     constructor() {
         super();
         this.loadImage('img/2_character_pepe/2_walk/W-21.png');
@@ -82,31 +88,65 @@ class Character extends MoveableObject {
         this.animate();
     }
 
+    /**
+     * Starts both the movement and graphics animation loops.
+     */
     animate() {
-        let moveId = setInterval(() => {
+        this.animateMovement();
+        this.animateGraphics();
+    }
+
+    /**
+     * Handles keyboard-driven movement and camera position.
+     */
+    animateMovement() {
+        let id = setInterval(() => {
             if (this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x) {
-                this.x += this.speed;
-                this.otherDirection = false;
-                this.lastMoveTime = new Date().getTime();
+                this.moveRightAction();
             }
-
             if (this.world.keyboard.LEFT && this.x > 0) {
-                this.x -= this.speed;
-                this.otherDirection = true;
-                this.lastMoveTime = new Date().getTime();
+                this.moveLeftAction();
             }
-
             if (this.world.keyboard.SPACE && !this.isAboveGround()) {
-                this.speedY = 30;
-                this.lastMoveTime = new Date().getTime();
-                this.world.soundManager.play('jump');
+                this.jumpAction();
             }
-
             this.world.camera_x = -this.x + 100;
         }, 1000 / 60);
-        this.intervals.push(moveId);
+        this.intervals.push(id);
+    }
 
-        let animId = setInterval(() => {
+    /**
+     * Moves the character right and updates direction and idle timer.
+     */
+    moveRightAction() {
+        this.x += this.speed;
+        this.otherDirection = false;
+        this.lastMoveTime = new Date().getTime();
+    }
+
+    /**
+     * Moves the character left and updates direction and idle timer.
+     */
+    moveLeftAction() {
+        this.x -= this.speed;
+        this.otherDirection = true;
+        this.lastMoveTime = new Date().getTime();
+    }
+
+    /**
+     * Makes the character jump and plays the jump sound.
+     */
+    jumpAction() {
+        this.speedY = 30;
+        this.lastMoveTime = new Date().getTime();
+        this.world.soundManager.play('jump');
+    }
+
+    /**
+     * Selects and plays the correct animation based on the current state.
+     */
+    animateGraphics() {
+        let id = setInterval(() => {
             if (this.isDead()) {
                 this.playAnimation(this.IMAGES_DEAD);
             } else if (this.isHurt()) {
@@ -121,9 +161,13 @@ class Character extends MoveableObject {
                 this.playAnimation(this.IMAGES_IDLE);
             }
         }, 100);
-        this.intervals.push(animId);
+        this.intervals.push(id);
     }
 
+    /**
+     * Checks whether the character has been idle long enough to sleep.
+     * @returns {boolean} True if idle for more than the threshold.
+     */
     isLongIdle() {
         let timepassed = (new Date().getTime() - this.lastMoveTime) / 1000;
         return timepassed > 8;

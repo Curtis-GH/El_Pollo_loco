@@ -3,6 +3,9 @@ let world;
 let keyboard = new Keyboard();
 let soundManager = new SoundManager();
 
+/**
+ * Initializes the canvas, UI controls and touch buttons on page load.
+ */
 function init() {
     canvas = document.getElementById('canvas');
     updateMuteButton();
@@ -11,16 +14,26 @@ function init() {
     initDialogBackdrop();
 }
 
+/**
+ * Changes the game volume from the slider input.
+ * @param {string} value - The slider value (0-1) as a string.
+ */
 function changeVolume(value) {
     soundManager.setVolume(parseFloat(value));
 }
 
+/**
+ * Hides the start screen and starts a new game with background music.
+ */
 function startGame() {
     document.getElementById('start-screen').classList.add('hidden');
     world = new World(canvas, keyboard, soundManager);
     soundManager.playBackground();
 }
 
+/**
+ * Hides the end screens and starts a fresh game without a page reload.
+ */
 function restartGame() {
     document.getElementById('gameover-screen').classList.add('hidden');
     document.getElementById('win-screen').classList.add('hidden');
@@ -28,6 +41,9 @@ function restartGame() {
     soundManager.playBackground();
 }
 
+/**
+ * Returns to the start screen and stops all sounds.
+ */
 function goToStart() {
     document.getElementById('gameover-screen').classList.add('hidden');
     document.getElementById('win-screen').classList.add('hidden');
@@ -35,11 +51,17 @@ function goToStart() {
     soundManager.stopAll();
 }
 
+/**
+ * Toggles mute state and updates the mute button icon.
+ */
 function toggleMute() {
     soundManager.toggleMute();
     updateMuteButton();
 }
 
+/**
+ * Updates the mute button icon to match the current mute state.
+ */
 function updateMuteButton() {
     let btn = document.getElementById('mute-button');
     btn.textContent = soundManager.isMuted ? '🔇' : '🔊';
@@ -68,6 +90,10 @@ function initDialogBackdrop() {
         if (e.target === dialog) dialog.close();
     });
 }
+
+/**
+ * Sets keyboard flags to true on keydown.
+ */
 window.addEventListener("keydown", (e) => {
     if (e.keyCode == 39) keyboard.RIGHT = true;
     if (e.keyCode == 37) keyboard.LEFT = true;
@@ -77,6 +103,9 @@ window.addEventListener("keydown", (e) => {
     if (e.keyCode == 68) keyboard.D = true;
 });
 
+/**
+ * Resets keyboard flags to false on keyup.
+ */
 window.addEventListener("keyup", (e) => {
     if (e.keyCode == 39) keyboard.RIGHT = false;
     if (e.keyCode == 37) keyboard.LEFT = false;

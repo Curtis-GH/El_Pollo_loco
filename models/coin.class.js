@@ -1,3 +1,6 @@
+/**
+ * Collectible coin with a two-frame spinning animation.
+ */
 class Coin extends MoveableObject {
     width = 80;
     height = 80;
@@ -7,6 +10,11 @@ class Coin extends MoveableObject {
         'img/8_coin/coin_2.png',
     ];
 
+    /**
+     * Loads the coin images, sets the position and starts animating.
+     * @param {number} x - Horizontal position.
+     * @param {number} y - Vertical position.
+     */
     constructor(x, y) {
         super();
         this.loadImages(this.IMAGES_COIN);
@@ -16,6 +24,9 @@ class Coin extends MoveableObject {
         this.animate();
     }
 
+    /**
+     * Plays the spinning coin animation.
+     */
     animate() {
         let id = setInterval(() => {
             this.playAnimation(this.IMAGES_COIN);

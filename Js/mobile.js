@@ -5,16 +5,12 @@
  */
 function bindTouchButton(id, key) {
     let btn = document.getElementById(id);
-    btn.addEventListener('touchstart', (e) => {
-        e.preventDefault();
-        keyboard[key] = true;
-    });
-    btn.addEventListener('touchend', (e) => {
-        e.preventDefault();
-        keyboard[key] = false;
-    });
+    if (!btn) return;
+    btn.addEventListener('touchstart', (e) => { e.preventDefault(); keyboard[key] = true; });
+    btn.addEventListener('touchend', (e) => { e.preventDefault(); keyboard[key] = false; });
     btn.addEventListener('mousedown', () => keyboard[key] = true);
     btn.addEventListener('mouseup', () => keyboard[key] = false);
+    btn.addEventListener('mouseleave', () => keyboard[key] = false);
 }
 
 /**
