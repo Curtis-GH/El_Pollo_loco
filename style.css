@@ -1,29 +1,10 @@
-html, body {
-    overflow: hidden;
-}
-
-#game-container {
-    position: relative;
-    width: 720px;
-    height: 480px;
-    aspect-ratio: 720 / 480;
-    max-width: 100vw;
-    max-height: 90vh;
-    box-shadow: 0 0 40px rgba(0,0,0,0.8);
-    margin-top: 16px;
-}
-
-canvas {
-    background-color: black;
-    width: 100%;
-    height: 100%;
-    display: block;
-}
-
-
 @font-face {
     font-family: 'Lilita One';
     src: url('fonts/LilitaOne-Regular.ttf');
+}
+
+html, body {
+    overflow: hidden;
 }
 
 body {
@@ -52,12 +33,18 @@ h1 {
     position: relative;
     width: 720px;
     height: 480px;
+    aspect-ratio: 720 / 480;
+    max-width: 100vw;
+    max-height: 90vh;
     box-shadow: 0 0 40px rgba(0,0,0,0.8);
     margin-top: 16px;
 }
 
 canvas {
     background-color: black;
+    width: 100%;
+    height: 100%;
+    display: block;
 }
 
 .hidden {
@@ -97,6 +84,41 @@ canvas {
     background-color: #e09000;
 }
 
+#controls-button {
+    position: absolute;
+    bottom: 18%;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 10px 30px;
+    font-size: 18px;
+    background-color: #f5a623;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    font-family: 'Lilita One', cursive;
+}
+
+#controls-button:hover {
+    background-color: #e09000;
+}
+
+#impressum-link {
+    position: absolute;
+    bottom: 8%;
+    left: 50%;
+    transform: translateX(-50%);
+    color: #fff;
+    font-family: 'Lilita One', cursive;
+    font-size: 16px;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+#impressum-link:hover {
+    color: #f5a623;
+}
+
 .end-buttons {
     position: absolute;
     bottom: 15%;
@@ -117,9 +139,6 @@ canvas {
     font-family: 'Lilita One', cursive;
 }
 
-.end-buttons button:hover {
-    background-color: #e09000;
-}
 .end-buttons button:hover {
     background-color: #e09000;
 }
@@ -155,101 +174,16 @@ canvas {
     cursor: pointer;
     accent-color: #f5a623;
 }
+
 #rotate-hint {
     display: none;
 }
-#touch-controls {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    padding: 20px;
-    box-sizing: border-box;
-    z-index: 20;
-    pointer-events: none;
-}
-
-.touch-left, .touch-right {
-    display: flex;
-    gap: 16px;
-    pointer-events: auto;
-}
-
-.touch-btn {
-    width: 60px;
-    height: 60px;
-    font-size: 28px;
-    background-color: rgba(245, 166, 35, 0.85);
-    border: none;
-    border-radius: 12px;
-    cursor: pointer;
-    user-select: none;
-    touch-action: manipulation;
-}
 
 #touch-controls {
     display: none;
 }
 
-#impressum-link {
-    position: absolute;
-    bottom: 8%;
-    left: 50%;
-    transform: translateX(-50%);
-    color: #fff;
-    font-family: 'Lilita One', cursive;
-    font-size: 16px;
-    text-decoration: underline;
-    cursor: pointer;
-}
-
-#impressum-link:hover {
-    color: #f5a623;
-}
-
-.impressum-container {
-    max-width: 600px;
-    margin: 40px auto;
-    padding: 30px;
-    background: rgba(255, 255, 255, 0.95);
-    border-radius: 12px;
-    font-family: 'Lilita One', cursive;
-    color: #333;
-}
-
-.impressum-container h1 {
-    color: #f5a623;
-    text-shadow: none;
-    margin-top: 0;
-}
-
-.impressum-container h2 {
-    color: #333;
-    font-size: 20px;
-    margin-top: 24px;
-}
-
-.impressum-note {
-    margin-top: 30px;
-    font-size: 14px;
-    color: #888;
-}
-
-.impressum-back {
-    display: inline-block;
-    margin-top: 24px;
-    color: #f5a623;
-    text-decoration: none;
-    font-size: 18px;
-}
-
-.impressum-back:hover {
-    text-decoration: underline;
-}
-
-@media (max-width: 1024px) {
+@media (pointer: coarse) {
     #touch-controls {
         position: absolute;
         bottom: 0;
@@ -271,34 +205,15 @@ canvas {
 }
 
 .touch-btn {
-    width: 60px;
-    height: 60px;
-    font-size: 28px;
+    width: 45px;
+    height: 45px;
+    font-size: 20px;
     background-color: rgba(245, 166, 35, 0.85);
     border: none;
     border-radius: 12px;
     cursor: pointer;
     user-select: none;
     touch-action: manipulation;
-}
-
-#controls-button {
-    position: absolute;
-    bottom: 18%;
-    left: 50%;
-    transform: translateX(-50%);
-    padding: 10px 30px;
-    font-size: 18px;
-    background-color: #f5a623;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: bold;
-    font-family: 'Lilita One', cursive;
-}
-
-#controls-button:hover {
-    background-color: #e09000;
 }
 
 #controls-dialog {
@@ -370,6 +285,47 @@ canvas {
 .dialog-close:hover {
     background: #e09000;
 }
+
+.impressum-container {
+    max-width: 600px;
+    margin: 40px auto;
+    padding: 30px;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 12px;
+    font-family: 'Lilita One', cursive;
+    color: #333;
+}
+
+.impressum-container h1 {
+    color: #f5a623;
+    text-shadow: none;
+    margin-top: 0;
+}
+
+.impressum-container h2 {
+    color: #333;
+    font-size: 20px;
+    margin-top: 24px;
+}
+
+.impressum-note {
+    margin-top: 30px;
+    font-size: 14px;
+    color: #888;
+}
+
+.impressum-back {
+    display: inline-block;
+    margin-top: 24px;
+    color: #f5a623;
+    text-decoration: none;
+    font-size: 18px;
+}
+
+.impressum-back:hover {
+    text-decoration: underline;
+}
+
 @media (max-width: 1024px) {
     h1 {
         display: none;
@@ -401,10 +357,7 @@ canvas {
         box-sizing: border-box;
     }
 
-    
     #game-container, h1 {
         display: none;
-        margin-top: 0;
-        max-height: 100vh;
     }
 }

@@ -145,24 +145,6 @@ class World {
             }
         });
     }
-
-    /**
-     * Respawns three bottles across the level when none are left.
-     */
-    respawnBottles() {
-        if (this.level.bottles.length === 0 && !this.isRespawningBottles) {
-            this.isRespawningBottles = true;
-            let id = setTimeout(() => {
-                for (let i = 0; i < 3; i++) {
-                    let x = 200 + Math.random() * (this.level.level_end_x - 400);
-                    this.level.bottles.push(new Bottle(x, 370));
-                }
-                this.isRespawningBottles = false;
-            }, 3000);
-            this.intervals.push(id);
-        }
-    }
-
     /**
      * Checks collisions between thrown bottles and the endboss.
      */
@@ -182,18 +164,52 @@ class World {
     }
 
     /**
+     * Respawns three bottles across the level when none are left.
+     */
+    respawnBottles() {
+        if (this.level.bottles.length === 0 && !this.isRespawningBottles) {
+            this.isRespawningBottles = true;
+            let id = setTimeout(() => {
+                for (let i = 0; i < 3; i++) {
+                    let x = 200 + Math.random() * (this.level.level_end_x - 400);
+                    this.level.bottles.push(new Bottle(x, 370));
+                }
+                this.isRespawningBottles = false;
+            }, 3000);
+            this.intervals.push(id);
+        }
+    }
+
+    /**
+     * throwing bottle on the side where pepe looks
+     */
+    checkThrowObjects() {
+    if (this.keyboard.D && this.bottleCount > 0) {
+        let direction = this.character.otherDirection;
+        let offsetX = direction ? -50 : 100;
+        let bottle = new ThrowableObject(this.character.x + offsetX, this.character.y + 100, direction);
+        this.throwableObjects.push(bottle);
+        this.bottleCount -= 20;
+        if (this.bottleCount < 0) this.bottleCount = 0;
+        this.statusBarBottle.setPercentage(this.bottleCount);
+        this.soundManager.play('throw');
+        this.keyboard.D = false;
+    }
+}
+
+    /**
      * Clears the canvas and draws all layers, then requests the next frame.
      */
     draw() {
-        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-        this.drawBackground();
-        this.drawStatusBars();
-        this.drawGameObjects();
-        let self = this;
-        requestAnimationFrame(function () {
-            self.draw();
-        });
-    }
+    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    this.drawBackground();
+    this.drawGameObjects();
+    this.drawStatusBars();
+    let self = this;
+    requestAnimationFrame(function () {
+        self.draw();
+    });
+}
 
     /**
      * Draws the background objects relative to the camera.
@@ -218,15 +234,15 @@ class World {
      * Draws the character, enemies and collectible objects.
      */
     drawGameObjects() {
-        this.ctx.translate(this.camera_x, 0);
-        this.addToMap(this.character);
-        this.addObjectsToMap(this.level.clouds);
-        this.addObjectsToMap(this.level.enemies);
-        this.addObjectsToMap(this.level.coins);
-        this.addObjectsToMap(this.level.bottles);
-        this.addObjectsToMap(this.throwableObjects);
-        this.ctx.translate(-this.camera_x, 0);
-    }
+    this.ctx.translate(this.camera_x, 0);
+    this.addObjectsToMap(this.level.clouds);
+    this.addObjectsToMap(this.level.enemies);
+    this.addObjectsToMap(this.level.coins);
+    this.addObjectsToMap(this.level.bottles);
+    this.addObjectsToMap(this.throwableObjects);
+    this.addToMap(this.character);
+    this.ctx.translate(-this.camera_x, 0);
+}
 
     /**
      * Draws a list of objects onto the map.
