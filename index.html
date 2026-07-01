@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/x-icon" href="img/favicon.ico">
     <link href="https://fonts.googleapis.com/css2?family=Lilita+One&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <title>EL POLLO LOCO</title>
@@ -47,6 +48,18 @@
                 <button id="btn-throw" class="touch-btn">🍾</button>
             </div>
         </div>
+        <dialog id="controls-dialog">
+            <div class="dialog-content">
+                <button class="dialog-close" onclick="closeControls()">✕</button>
+                <h2>Controls</h2>
+                <ul>
+                    <li><span>◀ ▶</span> Move left / right</li>
+                    <li><span>SPACE</span> Jump</li>
+                    <li><span>D</span> Throw bottle</li>
+                </ul>
+                <p class="dialog-hint">On mobile: use the on-screen buttons.</p>
+            </div>
+        </dialog>
 
         <div id="audio-controls">
             <button id="mute-button" onclick="toggleMute()">🔊</button>
@@ -56,6 +69,7 @@
         <div id="start-screen">
             <img src="img/9_intro_outro_screens/start/startscreen_1.png" alt="Start Screen">
             <button id="start-button" onclick="startGame()">PLAY</button>
+            <button id="controls-button" onclick="openControls()">CONTROLS</button>
         </div>
 
         <div id="gameover-screen" class="end-screen hidden">

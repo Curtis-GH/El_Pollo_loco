@@ -225,6 +225,95 @@ canvas {
     user-select: none;
     touch-action: manipulation;
 }
+
+#controls-button {
+    position: absolute;
+    bottom: 18%;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 10px 30px;
+    font-size: 18px;
+    background-color: #f5a623;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    font-family: 'Lilita One', cursive;
+}
+
+#controls-button:hover {
+    background-color: #e09000;
+}
+
+#controls-dialog {
+    border: none;
+    border-radius: 12px;
+    padding: 0;
+    background: transparent;
+}
+
+#controls-dialog::backdrop {
+    background: rgba(0, 0, 0, 0.6);
+}
+
+.dialog-content {
+    position: relative;
+    background: #fff;
+    padding: 30px 40px;
+    border-radius: 12px;
+    font-family: 'Lilita One', cursive;
+    min-width: 280px;
+}
+
+.dialog-content h2 {
+    margin: 0 0 20px;
+    color: #f5a623;
+    text-align: center;
+}
+
+.dialog-content ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.dialog-content li {
+    display: flex;
+    justify-content: space-between;
+    gap: 30px;
+    padding: 8px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.dialog-content li span {
+    font-weight: bold;
+    color: #333;
+}
+
+.dialog-hint {
+    margin-top: 20px;
+    font-size: 14px;
+    color: #888;
+    text-align: center;
+}
+
+.dialog-close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 32px;
+    height: 32px;
+    border: none;
+    background: #f5a623;
+    color: #fff;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.dialog-close:hover {
+    background: #e09000;
+}
 @media (max-width: 1024px) {
     h1 {
         display: none;

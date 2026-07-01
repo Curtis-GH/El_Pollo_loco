@@ -8,6 +8,7 @@ function init() {
     updateMuteButton();
     document.getElementById('volume-slider').value = soundManager.volume;
     initTouchButtons();
+    initDialogBackdrop();
 }
 
 function changeVolume(value) {
@@ -44,6 +45,29 @@ function updateMuteButton() {
     btn.textContent = soundManager.isMuted ? '🔇' : '🔊';
 }
 
+/**
+ * Opens the controls dialog.
+ */
+function openControls() {
+    document.getElementById('controls-dialog').showModal();
+}
+
+/**
+ * Closes the controls dialog.
+ */
+function closeControls() {
+    document.getElementById('controls-dialog').close();
+}
+
+/**
+ * Closes the dialog when clicking on the backdrop.
+ */
+function initDialogBackdrop() {
+    let dialog = document.getElementById('controls-dialog');
+    dialog.addEventListener('click', (e) => {
+        if (e.target === dialog) dialog.close();
+    });
+}
 window.addEventListener("keydown", (e) => {
     if (e.keyCode == 39) keyboard.RIGHT = true;
     if (e.keyCode == 37) keyboard.LEFT = true;
