@@ -193,6 +193,62 @@ canvas {
     display: none;
 }
 
+#impressum-link {
+    position: absolute;
+    bottom: 8%;
+    left: 50%;
+    transform: translateX(-50%);
+    color: #fff;
+    font-family: 'Lilita One', cursive;
+    font-size: 16px;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+#impressum-link:hover {
+    color: #f5a623;
+}
+
+.impressum-container {
+    max-width: 600px;
+    margin: 40px auto;
+    padding: 30px;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 12px;
+    font-family: 'Lilita One', cursive;
+    color: #333;
+}
+
+.impressum-container h1 {
+    color: #f5a623;
+    text-shadow: none;
+    margin-top: 0;
+}
+
+.impressum-container h2 {
+    color: #333;
+    font-size: 20px;
+    margin-top: 24px;
+}
+
+.impressum-note {
+    margin-top: 30px;
+    font-size: 14px;
+    color: #888;
+}
+
+.impressum-back {
+    display: inline-block;
+    margin-top: 24px;
+    color: #f5a623;
+    text-decoration: none;
+    font-size: 18px;
+}
+
+.impressum-back:hover {
+    text-decoration: underline;
+}
+
 @media (max-width: 1024px) {
     #touch-controls {
         position: absolute;
