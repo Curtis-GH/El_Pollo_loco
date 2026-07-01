@@ -7,6 +7,7 @@ function init() {
     canvas = document.getElementById('canvas');
     updateMuteButton();
     document.getElementById('volume-slider').value = soundManager.volume;
+    initTouchButtons();
 }
 
 function changeVolume(value) {
