@@ -115,33 +115,35 @@ checkEndbossCollision() {
      * @param {MoveableObject} enemy - The enemy to check against.
      */
     handleEnemyCollision(enemy) {
-        if (enemy instanceof Endboss) return;
-        if (enemy.isChickenDead) return;
-        if (this.character.isCollidingFromAbove(enemy)) {
-            enemy.die();
-            this.character.speedY = 20;
-            this.soundManager.play('chickenDie');
-        } else if (this.character.isColliding(enemy) && !this.character.isHurt()) {
-            this.character.hit();
-            this.statusBarHealth.setPercentage(this.character.energy);
-            this.soundManager.play('hit');
-        }
+    if (enemy instanceof Endboss) return;
+    if (enemy.isChickenDead) return;
+    if (this.character.isCollidingFromAbove(enemy)) {
+        enemy.die();
+        this.character.speedY = 20;
+        this.character.isStompBouncing = true;
+        this.soundManager.play('chickenDie');
+    } else if (this.character.isColliding(enemy) && !this.character.isHurt()) {
+        this.character.hit();
+        this.statusBarHealth.setPercentage(this.character.energy);
+        this.soundManager.play('hit');
     }
+}
 
     /**
      * Checks collisions between the character and coins and collects them.
      */
     checkCoinCollisions() {
-        this.level.coins.forEach((coin, index) => {
-            if (this.character.isColliding(coin)) {
-                this.level.coins.splice(index, 1);
-                this.coinCount += 20;
-                if (this.coinCount > 100) this.coinCount = 100;
-                this.statusBarCoin.setPercentage(this.coinCount);
-                this.soundManager.play('coin');
-            }
-        });
-    }
+    if (this.coinCount >= 100) return;
+    this.level.coins.forEach((coin, index) => {
+        if (this.character.isColliding(coin)) {
+            this.level.coins.splice(index, 1);
+            this.coinCount += 20;
+            if (this.coinCount > 100) this.coinCount = 100;
+            this.statusBarCoin.setPercentage(this.coinCount);
+            this.soundManager.play('coin');
+        }
+    });
+}
 
     /**
      * Checks collisions between the character and bottles and collects them.
@@ -202,6 +204,7 @@ checkThrowObjects() {
     let now = new Date().getTime();
     if (this.keyboard.D && this.bottleCount > 0 && now - this.lastThrowTime > 1500) {
         this.lastThrowTime = now;
+        this.character.lastMoveTime = now;
         let direction = this.character.otherDirection;
         let offsetX = direction ? -50 : 100;
         let bottle = new ThrowableObject(this.character.x + offsetX, this.character.y + 100, direction);
@@ -214,45 +217,51 @@ checkThrowObjects() {
     }
 }
 
-    /**
-     * Clears the canvas and draws all layers, then requests the next frame.
-     */
     draw() {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     this.drawBackground();
-    this.drawGameObjects();
+    this.drawClouds();
     this.drawStatusBars();
+    this.drawGameObjects();
     let self = this;
     requestAnimationFrame(function () {
         self.draw();
     });
 }
 
-    /**
-     * Draws the background objects relative to the camera.
-     */
-    drawBackground() {
-        this.ctx.translate(this.camera_x, 0);
-        this.addObjectsToMap(this.level.backgroundObjects);
-        this.ctx.translate(-this.camera_x, 0);
-    }
+/**
+ * Draws the background objects relative to the camera.
+ */
+drawBackground() {
+    this.ctx.translate(this.camera_x, 0);
+    this.addObjectsToMap(this.level.backgroundObjects);
+    this.ctx.translate(-this.camera_x, 0);
+}
 
-    /**
-     * Draws all status bars in a fixed screen position.
-     */
-    drawStatusBars() {
-        this.addToMap(this.statusBarHealth);
-        this.addToMap(this.statusBarCoin);
-        this.addToMap(this.statusBarBottle);
-        this.addToMap(this.statusBarEndboss);
-    }
-
-    /**
-     * Draws the character, enemies and collectible objects.
-     */
-    drawGameObjects() {
+/**
+ * Draws clouds relative to the camera, behind the status bars.
+ */
+drawClouds() {
     this.ctx.translate(this.camera_x, 0);
     this.addObjectsToMap(this.level.clouds);
+    this.ctx.translate(-this.camera_x, 0);
+}
+
+/**
+ * Draws all status bars in a fixed screen position.
+ */
+drawStatusBars() {
+    this.addToMap(this.statusBarHealth);
+    this.addToMap(this.statusBarCoin);
+    this.addToMap(this.statusBarBottle);
+    this.addToMap(this.statusBarEndboss);
+}
+
+/**
+ * Draws the character, enemies and collectibles on top of everything.
+ */
+drawGameObjects() {
+    this.ctx.translate(this.camera_x, 0);
     this.addObjectsToMap(this.level.enemies);
     this.addObjectsToMap(this.level.coins);
     this.addObjectsToMap(this.level.bottles);

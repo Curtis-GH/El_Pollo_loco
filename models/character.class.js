@@ -7,6 +7,7 @@ class Character extends MoveableObject {
     y = 10;
     speed = 10;
     offset = { top: 100, bottom: 10, left: 20, right: 20 };
+    isStompBouncing = false;
 
     IMAGES_IDLE = [
         'img/2_character_pepe/1_idle/idle/I-1.png',
@@ -100,20 +101,25 @@ class Character extends MoveableObject {
      * Handles keyboard-driven movement and camera position.
      */
     animateMovement() {
-        let id = setInterval(() => {
+    let id = setInterval(() => {
+        if (!this.isStompBouncing) {
             if (this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x) {
                 this.moveRightAction();
             }
             if (this.world.keyboard.LEFT && this.x > 0) {
                 this.moveLeftAction();
             }
-            if (this.world.keyboard.SPACE && !this.isAboveGround()) {
-                this.jumpAction();
-            }
-            this.world.camera_x = -this.x + 100;
-        }, 1000 / 60);
-        this.intervals.push(id);
-    }
+        }
+        if (this.world.keyboard.SPACE && !this.isAboveGround()) {
+            this.jumpAction();
+        }
+        if (this.isStompBouncing && !this.isAboveGround()) {
+            this.isStompBouncing = false;
+        }
+        this.world.camera_x = -this.x + 100;
+    }, 1000 / 60);
+    this.intervals.push(id);
+}
 
     /**
      * Moves the character right and updates direction and idle timer.

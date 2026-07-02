@@ -102,7 +102,6 @@ class Endboss extends MoveableObject {
     checkFirstContact() {
         if (!this.hadFirstContact && this.world.character.x > 1900) {
             this.hadFirstContact = true;
-            this.world.spawnChaseChickens();
         }
     }
 

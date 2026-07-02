@@ -28,7 +28,7 @@ class SoundManager {
         this.volume = savedVolume !== null ? parseFloat(savedVolume) : 0.5;
         this.sounds.background.loop = true;
         this.applyVolume();
-        this.applyMute();
+        
     }
 
     /**
