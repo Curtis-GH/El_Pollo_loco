@@ -1,4 +1,4 @@
-# El_Pollo_loco# El Pollo Loco
+# El_Pollo_loco
 
 Ein Browser-basiertes Jump-and-Run-Spiel, entwickelt im Rahmen der Developer Akademie. Der Spieler steuert den Charakter Pepe durch eine Wüstenlandschaft, sammelt Coins und Flaschen, besiegt Hühner-Gegner und muss sich am Ende einem Endboss stellen.
 
