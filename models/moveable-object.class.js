@@ -54,10 +54,10 @@ class MoveableObject extends DrawableObject {
      * @returns {boolean} True if colliding from above while airborne.
      */
     isCollidingFromAbove(mo) {
-        let characterBottom = this.y + this.height - this.offset.bottom;
-        let enemyTop = mo.y + mo.offset.top;
-        return this.isColliding(mo) && this.isAboveGround() && characterBottom < enemyTop + 30;
-    }
+    let characterBottom = this.y + this.height - this.offset.bottom;
+    let enemyTop = mo.y + mo.offset.top;
+    return this.isColliding(mo) && this.speedY < 0 && characterBottom < enemyTop + 30;
+}
 
     /**
      * Reduces energy when hit and records the time of the hit.

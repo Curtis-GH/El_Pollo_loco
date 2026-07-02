@@ -39,7 +39,7 @@ class ThrowableObject extends MoveableObject {
 
 checkThrowObjects() {
     let now = new Date().getTime();
-    if (this.keyboard.D && this.bottleCount > 0 && now - this.lastThrowTime > 1500) {
+    if (this.keyboard.D && this.bottleCount > 0 && now - this.lastThrowTime > 1000) {
         this.lastThrowTime = now;
         let direction = this.character.otherDirection;
         let offsetX = direction ? -50 : 100;

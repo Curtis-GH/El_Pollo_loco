@@ -50,8 +50,7 @@ function createLevel1() {
             new Coin(700, 330),
             new Coin(900, 280),
             new Coin(1100, 330),
-            new Coin(1400, 280),
-            new Coin(1700, 330),
+           
         ],
         [
             new Bottle(400, 370),

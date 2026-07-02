@@ -53,6 +53,7 @@ class World {
         this.level.enemies.forEach(enemy => enemy.animate());
         let id = setInterval(() => {
             this.checkCollisions();
+            this.checkEndbossCollision();
             this.checkThrowObjects();
             this.checkCoinCollisions();
             this.checkBottleCollisions();
@@ -88,62 +89,62 @@ class World {
         }
     }
 
+
     /**
-     * Checks collisions between the character and all enemies.
-     */
+ * Instantly kills the character on contact with the endboss.
+ */
+    checkEndbossCollision() {
+        if (!this.endboss || this.endboss.isDead()) return;
+        if (this.character.isColliding(this.endboss)) {
+            this.character.energy = 0;
+            this.statusBarHealth.setPercentage(0);
+        }
+    }
+
     checkCollisions() {
-        this.level.enemies.forEach((enemy) => this.handleEnemyCollision(enemy));
-        this.checkEndbossCollision();
+        let stomped = false;
+        this.level.enemies.forEach((enemy) => {
+            if (enemy instanceof Endboss) return;
+            if (enemy.isChickenDead) return;
+            if (this.character.isCollidingFromAbove(enemy)) {
+                enemy.die();
+                this.character.speedY = 20;
+                this.character.isStompBouncing = true;
+                this.soundManager.play('chickenDie');
+                stomped = true;
+            }
+        });
+        if (!stomped) {
+            this.level.enemies.forEach((enemy) => {
+                if (enemy instanceof Endboss) return;
+                if (enemy.isChickenDead) return;
+                if (this.character.isColliding(enemy) && !this.character.isHurt()) {
+                    this.character.hit();
+                    this.statusBarHealth.setPercentage(this.character.energy);
+                    this.soundManager.play('hit');
+                }
+            });
+        }
         if (this.character.isDead()) {
             this.showGameOver();
         }
     }
-    /**
- * Instantly kills the character on contact with the endboss.
- */
-checkEndbossCollision() {
-    if (!this.endboss || this.endboss.isDead()) return;
-    if (this.character.isColliding(this.endboss)) {
-        this.character.energy = 0;
-        this.statusBarHealth.setPercentage(0);
-         this.character.playAnimation(this.character.IMAGES_DEAD);
-    }
-}
-
-    /**
-     * Handles a single enemy collision (stomp kill or taking damage).
-     * @param {MoveableObject} enemy - The enemy to check against.
-     */
-    handleEnemyCollision(enemy) {
-    if (enemy instanceof Endboss) return;
-    if (enemy.isChickenDead) return;
-    if (this.character.isCollidingFromAbove(enemy)) {
-        enemy.die();
-        this.character.speedY = 20;
-        this.character.isStompBouncing = true;
-        this.soundManager.play('chickenDie');
-    } else if (this.character.isColliding(enemy) && !this.character.isHurt()) {
-        this.character.hit();
-        this.statusBarHealth.setPercentage(this.character.energy);
-        this.soundManager.play('hit');
-    }
-}
 
     /**
      * Checks collisions between the character and coins and collects them.
      */
     checkCoinCollisions() {
-    if (this.coinCount >= 100) return;
-    this.level.coins.forEach((coin, index) => {
-        if (this.character.isColliding(coin)) {
-            this.level.coins.splice(index, 1);
-            this.coinCount += 20;
-            if (this.coinCount > 100) this.coinCount = 100;
-            this.statusBarCoin.setPercentage(this.coinCount);
-            this.soundManager.play('coin');
-        }
-    });
-}
+        if (this.coinCount >= 100) return;
+        this.level.coins.forEach((coin, index) => {
+            if (this.character.isColliding(coin)) {
+                this.level.coins.splice(index, 1);
+                this.coinCount += 20;
+                if (this.coinCount > 100) this.coinCount = 100;
+                this.statusBarCoin.setPercentage(this.coinCount);
+                this.soundManager.play('coin');
+            }
+        });
+    }
 
     /**
      * Checks collisions between the character and bottles and collects them.
@@ -198,77 +199,77 @@ checkEndbossCollision() {
     /**
      * throwing bottle on the side where pepe looks with cooldown
      */
-   lastThrowTime = 0;
+    lastThrowTime = 0;
 
-checkThrowObjects() {
-    let now = new Date().getTime();
-    if (this.keyboard.D && this.bottleCount > 0 && now - this.lastThrowTime > 1500) {
-        this.lastThrowTime = now;
-        this.character.lastMoveTime = now;
-        let direction = this.character.otherDirection;
-        let offsetX = direction ? -50 : 100;
-        let bottle = new ThrowableObject(this.character.x + offsetX, this.character.y + 100, direction);
-        this.throwableObjects.push(bottle);
-        this.bottleCount -= 20;
-        if (this.bottleCount < 0) this.bottleCount = 0;
-        this.statusBarBottle.setPercentage(this.bottleCount);
-        this.soundManager.play('throw');
-        this.keyboard.D = false;
+    checkThrowObjects() {
+        let now = new Date().getTime();
+        if (this.keyboard.D && this.bottleCount > 0 && now - this.lastThrowTime > 1500) {
+            this.lastThrowTime = now;
+            this.character.lastMoveTime = now;
+            let direction = this.character.otherDirection;
+            let offsetX = direction ? -50 : 100;
+            let bottle = new ThrowableObject(this.character.x + offsetX, this.character.y + 100, direction);
+            this.throwableObjects.push(bottle);
+            this.bottleCount -= 20;
+            if (this.bottleCount < 0) this.bottleCount = 0;
+            this.statusBarBottle.setPercentage(this.bottleCount);
+            this.soundManager.play('throw');
+            this.keyboard.D = false;
+        }
     }
-}
 
     draw() {
-    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-    this.drawBackground();
-    this.drawClouds();
-    this.drawStatusBars();
-    this.drawGameObjects();
-    let self = this;
-    requestAnimationFrame(function () {
-        self.draw();
-    });
-}
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        this.drawBackground();
+        this.drawClouds();
+        this.drawStatusBars();
+        this.drawGameObjects();
+        let self = this;
+        requestAnimationFrame(function () {
+            self.draw();
+        });
+    }
 
-/**
- * Draws the background objects relative to the camera.
- */
-drawBackground() {
-    this.ctx.translate(this.camera_x, 0);
-    this.addObjectsToMap(this.level.backgroundObjects);
-    this.ctx.translate(-this.camera_x, 0);
-}
+    /**
+     * Draws the background objects relative to the camera.
+     */
+    drawBackground() {
+        this.ctx.translate(this.camera_x, 0);
+        this.addObjectsToMap(this.level.backgroundObjects);
+        this.ctx.translate(-this.camera_x, 0);
+    }
 
-/**
- * Draws clouds relative to the camera, behind the status bars.
- */
-drawClouds() {
-    this.ctx.translate(this.camera_x, 0);
-    this.addObjectsToMap(this.level.clouds);
-    this.ctx.translate(-this.camera_x, 0);
-}
+    /**
+     * Draws clouds relative to the camera, behind the status bars.
+     */
+    drawClouds() {
+        this.ctx.translate(this.camera_x, 0);
+        this.addObjectsToMap(this.level.clouds);
+        this.ctx.translate(-this.camera_x, 0);
+    }
 
-/**
- * Draws all status bars in a fixed screen position.
- */
-drawStatusBars() {
-    this.addToMap(this.statusBarHealth);
-    this.addToMap(this.statusBarCoin);
-    this.addToMap(this.statusBarBottle);
-    this.addToMap(this.statusBarEndboss);
-}
+    /**
+     * Draws all status bars in a fixed screen position.
+     */
+    drawStatusBars() {
+        this.addToMap(this.statusBarHealth);
+        this.addToMap(this.statusBarCoin);
+        this.addToMap(this.statusBarBottle);
+        this.addToMap(this.statusBarEndboss);
+    }
 
-/**
- * Draws the character, enemies and collectibles on top of everything.
- */
-drawGameObjects() {
-    this.ctx.translate(this.camera_x, 0);
-    this.addObjectsToMap(this.level.enemies);
-    this.addObjectsToMap(this.level.coins);
-    this.addObjectsToMap(this.level.bottles);
-    this.addObjectsToMap(this.throwableObjects);
-    this.addToMap(this.character);
-    this.ctx.translate(-this.camera_x, 0);
-}
+    /**
+     * Draws the character, enemies and collectibles on top of everything.
+     */
+    drawGameObjects() {
+        this.ctx.translate(this.camera_x, 0);
+        this.addObjectsToMap(this.level.enemies);
+        this.addObjectsToMap(this.level.coins);
+        this.addObjectsToMap(this.level.bottles);
+        this.addObjectsToMap(this.throwableObjects);
+        this.addToMap(this.character);
+        this.ctx.translate(-this.camera_x, 0);
+    }
 
     /**
      * Draws a list of objects onto the map.

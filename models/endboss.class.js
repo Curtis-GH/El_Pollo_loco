@@ -122,15 +122,19 @@ class Endboss extends MoveableObject {
     /**
      * Applies damage to the endboss and triggers death at zero energy.
      */
-    hitBoss() {
-        this.energy -= 20;
-        if (this.energy <= 0) {
-            this.energy = 0;
-            this.die();
-        } else {
-            this.lastHit = new Date().getTime();
-        }
+   hitBoss() {
+    this.energy -= 20;
+    if (!this.hasBeenHit) {
+        this.hasBeenHit = true;
+        this.speed = 4;
     }
+    if (this.energy <= 0) {
+        this.energy = 0;
+        this.die();
+    } else {
+        this.lastHit = new Date().getTime();
+    }
+}
     /**
  * Calculates speed based on remaining energy, capped at 5.
  * @returns {number} Current movement speed.
