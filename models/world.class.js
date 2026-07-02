@@ -194,10 +194,14 @@ checkEndbossCollision() {
     }
 
     /**
-     * throwing bottle on the side where pepe looks
+     * throwing bottle on the side where pepe looks with cooldown
      */
-    checkThrowObjects() {
-    if (this.keyboard.D && this.bottleCount > 0) {
+   lastThrowTime = 0;
+
+checkThrowObjects() {
+    let now = new Date().getTime();
+    if (this.keyboard.D && this.bottleCount > 0 && now - this.lastThrowTime > 1500) {
+        this.lastThrowTime = now;
         let direction = this.character.otherDirection;
         let offsetX = direction ? -50 : 100;
         let bottle = new ThrowableObject(this.character.x + offsetX, this.character.y + 100, direction);

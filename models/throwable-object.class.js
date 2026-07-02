@@ -35,4 +35,21 @@ class ThrowableObject extends MoveableObject {
         }, 25);
         this.intervals.push(id);
     }
+    lastThrowTime = 0;
+
+checkThrowObjects() {
+    let now = new Date().getTime();
+    if (this.keyboard.D && this.bottleCount > 0 && now - this.lastThrowTime > 1500) {
+        this.lastThrowTime = now;
+        let direction = this.character.otherDirection;
+        let offsetX = direction ? -50 : 100;
+        let bottle = new ThrowableObject(this.character.x + offsetX, this.character.y + 100, direction);
+        this.throwableObjects.push(bottle);
+        this.bottleCount -= 20;
+        if (this.bottleCount < 0) this.bottleCount = 0;
+        this.statusBarBottle.setPercentage(this.bottleCount);
+        this.soundManager.play('throw');
+        this.keyboard.D = false;
+    }
+}
 }

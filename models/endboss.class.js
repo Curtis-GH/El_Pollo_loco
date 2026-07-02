@@ -1,6 +1,6 @@
 /**
- * The endboss enemy. Stronger than normal chickens with hurt and death states.
- * Starts chasing the character once it comes close enough.
+ * The endboss enemy. Chases the character after first contact
+ * and spawns chase chickens once when the attack starts.
  */
 class Endboss extends MoveableObject {
 
@@ -9,7 +9,7 @@ class Endboss extends MoveableObject {
     y = 50;
     offset = { top: 60, bottom: 20, left: 30, right: 30 };
     energy = 100;
-    speed = 1;
+    speed = 3;
     isEndbossDead = false;
     hadFirstContact = false;
     world;
@@ -58,7 +58,7 @@ class Endboss extends MoveableObject {
     }
 
     /**
-     * Starts the animation loop and the movement loop.
+     * Starts the animation and movement loops.
      */
     animate() {
         this.animateGraphics();
@@ -83,7 +83,7 @@ class Endboss extends MoveableObject {
     }
 
     /**
-     * Checks for first contact and moves the boss towards the character.
+     * Checks the trigger, moves once activated and spawns chase chickens once.
      */
     animateMovement() {
         let id = setInterval(() => {
@@ -97,11 +97,12 @@ class Endboss extends MoveableObject {
     }
 
     /**
-     * Activates the boss once the character comes close enough.
+     * Activates the boss and spawns chase chickens once the character is close.
      */
     checkFirstContact() {
         if (!this.hadFirstContact && this.world.character.x > 1900) {
             this.hadFirstContact = true;
+            this.world.spawnChaseChickens();
         }
     }
 
@@ -109,14 +110,15 @@ class Endboss extends MoveableObject {
      * Moves the boss towards the character and faces the right direction.
      */
     moveTowardsCharacter() {
-        if (this.world.character.x < this.x) {
-            this.x -= this.speed;
-            this.otherDirection = false;
-        } else {
-            this.x += this.speed;
-            this.otherDirection = true;
-        }
+    this.speed = this.getCurrentSpeed();
+    if (this.world.character.x < this.x) {
+        this.x -= this.speed;
+        this.otherDirection = false;
+    } else {
+        this.x += this.speed;
+        this.otherDirection = true;
     }
+}
 
     /**
      * Applies damage to the endboss and triggers death at zero energy.
@@ -129,6 +131,14 @@ class Endboss extends MoveableObject {
         } else {
             this.lastHit = new Date().getTime();
         }
+    }
+    /**
+ * Calculates speed based on remaining energy, capped at 5.
+ * @returns {number} Current movement speed.
+ */
+    getCurrentSpeed() {
+        let calculated = 3 + Math.floor((100 - this.energy) / 20);
+        return Math.min(calculated, 5);
     }
 
     /**
